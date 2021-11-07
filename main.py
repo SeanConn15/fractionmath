@@ -7,7 +7,7 @@ def parse_forever():
         inputstr = input("?")
         if (inputstr == "stop"):
            sys.exit(0) 
-        a = parse(input("?"))
+        a = parse(inputstr)
         print ("=" + a.__str__())
 
 def parse(inputstring):

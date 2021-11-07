@@ -6,7 +6,9 @@ class Fraction:
     whole = 0
     numerator = 0
     denominator = 0
-    parser = re.compile('(?P<whole>-{0,1}\d+)_(?P<numerator>-{0,1}\d+)/(?P<denominator>\d+)')
+
+    parser = re.compile('(?P<numerator>-{0,1}\d+)/(?P<denominator>\d+)')
+    mixed_parser = re.compile('(?P<whole>-{0,1}\d+)_(?P<numerator>-{0,1}\d+)/(?P<denominator>\d+)')
 
     # constructor takes whole number, numerator and denominator
     # TODO: type checking
@@ -29,13 +31,21 @@ class Fraction:
     # parsing constructor
     # takes a string and constructs the object
     def construct_from_string(self, string):
-        res = self.parser.search(string)
-        if not res:
-            raise Exception("Inavlid Arugments")
+        res = self.mixed_parser.search(string)
+        if res:
+            self.whole = int(res.group("whole"))
+            self.numerator = int(res.group("numerator"))
+            self.denominator = int(res.group("denominator"))
+
+        else:
+            res2 = self.parser.search(string)
+            if not res2:
+                raise Exception("Parsing failed.")
+            self.whole = 0
+            self.numerator = int(res2.group("numerator"))
+            self.denominator = int(res2.group("denominator"))
+
         # TODO: check conversion to int
-        self.whole = int(res.group("whole"))
-        self.numerator = int(res.group("numerator"))
-        self.denominator = int(res.group("denominator"))
         self.simplify()
 
 
@@ -74,6 +84,12 @@ class Fraction:
     # add two fractions together
     def operate(self, other, operator):
 
+
+        self.numerator = self.numerator + (self.denominator * self.whole)
+        self.whole = 0
+
+        other.numerator = other.numerator + (other.denominator * other.whole)
+        other.whole = 0
 
         if (operator == "*"):
             self.numerator = self.numerator * other.numerator;

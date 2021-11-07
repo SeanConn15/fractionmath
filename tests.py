@@ -60,9 +60,9 @@ class TestFraction(unittest.TestCase):
         self.assertEqual(a, res)
 
     def test_negative_multiply(self):
-        a = Fraction(0, -1, 4)
+        a = Fraction(-1, 0, 1)
         b = Fraction(0, 1, 2)
-        res = Fraction(0, -1, 8) 
+        res = Fraction(0, -1, 2) 
         a.multiply(b)
         self.assertEqual(a, res)
 

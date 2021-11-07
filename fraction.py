@@ -1,22 +1,42 @@
 import math
+import re
 
 class Fraction:
 
     whole = 0
     numerator = 0
     denominator = 0
+    parser = re.compile('(?P<whole>\d+)_(?P<numerator>\d+)/(?P<denominator>\d+)')
 
     # constructor takes whole number, numerator and denominator
-    # TODO: automatically simplifies if possible
-    def __init__(self, whole, numerator, denominator):
+    # TODO: type checking
+    def __init__(self, *args):
+        if (len(args) == 3):
+            self.construct_from_ints(args[0], args[1], args[2])
+        elif (len(args) == 1):
+            self.construct_from_string(args[0])
+        else:
+            raise Exception("Invalid arguments, need either three integers or a string")
+
+    def construct_from_ints(self, whole, numerator, denominator):
         # takes overloaded fractions and adds them to number
         # divides if possible
         self.whole = whole
         self.numerator = numerator
         self.denominator = denominator
+        self.simplify()
 
     # parsing constructor
     # takes a string and constructs the object
+    def construct_from_string(self, string):
+        res = self.parser.search(string)
+        if not res:
+            raise Exception("Inavlid Arugments")
+        # TODO: check conversion to int
+        self.whole = int(res.group("whole"))
+        self.numerator = int(res.group("numerator"))
+        self.denominator = int(res.group("denominator"))
+        self.simplify()
 
 
     # internal simplify function
@@ -29,7 +49,6 @@ class Fraction:
 
         # check if the fraction can be simplified
         # TODO: divide by GCD
-        print ("hello")
         gcd = math.gcd(self.numerator, self.denominator)
         if gcd != 1:
             self.numerator = int(self.numerator / gcd)
@@ -48,24 +67,12 @@ class Fraction:
         # implicit conversion here is okay because the common denominator division above always returns an int
         n1 = int(self.numerator * diff_denominator_1)
         n2 = int(other.numerator * diff_denominator_2)
-        print (cd)
-        print (n1)
-        print (n2)
 
         new_num_1 = self.numerator * n1
         new_num_2 = other.numerator * n2
-        print()
-        print (new_num_1)
-        print (new_num_2)
         # add the numerators
         self.numerator = new_num_1 + new_num_2
         self.denominator = cd
-
-
-        # see if we need to add to the whole number
-
-
-        # modify member variables
 
 
         # simplify
@@ -75,7 +82,7 @@ class Fraction:
         # TODO: LCD algo
         return a * b
 
-    #TODO: overload addition operator
+    #TODO: overload addition operator?
 
     def __eq__(self, other):
         if (self.numerator == other.numerator and

@@ -15,14 +15,14 @@ def parse(inputstring):
     # parse out the fractions and the operators
     arguments = inputstring.split()
 
-    # TODO: handle other operators
+    # TODO: handle parsing failures
 
     # TODO: PEMDAS by parsing and creating an operations stack
 
     # create fraction objects
     a = Fraction(arguments[0])
     b = Fraction(arguments[2])
-    a.add(b)
+    a.operate(b, arguments[1])
     return a
 
 if __name__ == "__main__":

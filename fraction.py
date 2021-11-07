@@ -6,7 +6,7 @@ class Fraction:
     whole = 0
     numerator = 0
     denominator = 0
-    parser = re.compile('(?P<whole>\d+)_(?P<numerator>\d+)/(?P<denominator>\d+)')
+    parser = re.compile('(?P<whole>-{0,1}\d+)_(?P<numerator>-{0,1}\d+)/(?P<denominator>\d+)')
 
     # constructor takes whole number, numerator and denominator
     # TODO: type checking
@@ -47,6 +47,11 @@ class Fraction:
             self.whole = self.whole + 1
             self.numerator = self.numerator - self.denominator
 
+        # TODO:: check if the fraction is negative and take off from the whole
+        while (self.numerator < 0):
+            self.whole = self.whole - 1
+            self.numerator = self.numerator + self.denominator
+
         # check if the fraction can be simplified
         # TODO: divide by GCD
         gcd = math.gcd(self.numerator, self.denominator)
@@ -54,29 +59,56 @@ class Fraction:
             self.numerator = int(self.numerator / gcd)
             self.denominator = int(self.denominator / gcd)
 
+    def add(self, other):
+        self.operate(other, "+")
+
+    def subtract(self, other):
+        self.operate(other, "-")
+
+    def multiply(self, other):
+        self.operate(other, "*")
+
+    def divide(self, other):
+        self.operate(other, "/")
 
     # add two fractions together
-    def add(self, other):
-        # find the common denominator of the two fractions
-        cd = self.common_denominator(self.denominator, other.denominator)
+    def operate(self, other, operator):
 
-        # find the difference between each
-        diff_denominator_1 = cd / self.denominator
-        diff_denominator_2 = cd / other.denominator
-        # multiply both the numerators by what's needed
-        # implicit conversion here is okay because the common denominator division above always returns an int
-        n1 = int(self.numerator * diff_denominator_1)
-        n2 = int(other.numerator * diff_denominator_2)
 
-        new_num_1 = self.numerator * n1
-        new_num_2 = other.numerator * n2
-        # add the numerators
-        self.numerator = new_num_1 + new_num_2
-        self.denominator = cd
+        if (operator == "*"):
+            self.numerator = self.numerator * other.numerator;
+            self.denominator = self.denominator * other.denominator;
+        elif (operator == "/"):
+            self.numerator = self.numerator * other.denominator;
+            self.denominator = self.denominator * other.numerator;
+        elif operator == "+" or operator == "-":
 
+            # find the common denominator of the two fractions
+            cd = self.common_denominator(self.denominator, other.denominator)
+
+            # find the difference between each
+            diff_denominator_1 = cd / self.denominator
+            diff_denominator_2 = cd / other.denominator
+            # multiply both the numerators by what's needed
+            # implicit conversion here is okay because the common denominator division above always returns an int
+            n1 = int(self.numerator * diff_denominator_1)
+            n2 = int(other.numerator * diff_denominator_2)
+
+            new_num_1 = self.numerator * n1
+            new_num_2 = other.numerator * n2
+
+            if(operator == "+"):
+                self.numerator = new_num_1 + new_num_2
+            elif (operator == "-"):
+                self.numerator = new_num_1 - new_num_2
+            self.denominator = cd
+
+        else:
+            raise Exception("not givien a valid operator")
 
         # simplify
         self.simplify()
+
 
     def common_denominator(self, a, b):
         # TODO: LCD algo
